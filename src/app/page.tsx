@@ -11,6 +11,7 @@ import {
   OrbitControls,
   useTexture,
   Text,
+  Image
 } from '@react-three/drei';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Model as CanOriginal } from '@/components/canOriginal';
@@ -25,20 +26,14 @@ import { SectionNav } from '@/components/SectionNav';
 import { AnimatedBackground } from '@/components/AnimatedBackground';
 import { FloatingOrbs } from '@/components/FloatingOrbs';
 import { ContinueButton } from '@/components/ContinueButton';
+import { LimitedEditionUI } from '@/components/LimitedEditionUI';
+import { OurProcessUI } from '@/components/OurProcessUI';
 import * as THREE from 'three';
 import gsap from 'gsap';
 
 const sectionColors = [
-  '#a8d8b9', // 1: Flavors (A warm, sandy beige)
-  '#bbdc51', // 2: Ingredients (A fresh, natural green/mint)
-  '#bbdc86', // 2: Ingredients (A fresh, natural green/mint)
-  '#4a4e69', // 3: Lifestyle (A warm, sunset-like coral/pink)
-  '#4a4e69', // 4: CTA (A deep, elegant indigo to end with)
-  '#4a4e69', // 1: Flavors (A warm, sunset orange)
-  '#4a4e69', // 2: Ingredients (A cool, dusty lavender)
-  '#f25287', // 3: Lifestyle (A vibrant, electric magenta)
-  '#2d3047', // 4: CTA (A deep, late-night indigo)
-  '#2d3027', // 4: CTA (A deep, late-night indigo)
+  '#3eb14a', // 1: Flavors (A warm, sandy beige)
+  '#3eb14a', // 2: Ingredients (A fresh, natural green/mint)
 ];
 
 const flavors = [
@@ -116,11 +111,13 @@ const flavors = [
   },
 ];
 
-const TOTAL_SECTIONS = 9;
+const TOTAL_SECTIONS = 6;
+const NEW_SECTION_INDEX = 3;
 
 const Scene = ({ section, activeFlavor, isAnimating }) => {
   const canGroupRef = useRef(null);
   const canLimitedGroupRef = useRef(null);
+  const logoRef = useRef(null); 
   const titleTextRef = useRef(null); 
   const descriptionTextRef = useRef(null); 
 
@@ -149,15 +146,23 @@ const Scene = ({ section, activeFlavor, isAnimating }) => {
   useEffect(() => {
     if (!canGroupRef.current) return;
     if (!canLimitedGroupRef.current) return;
+    if (!logoRef.current) return;
     if (!titleTextRef.current) return;
     if (!descriptionTextRef.current) return;
 
+    let logoPosition, logoScale, logoMaterial;
     let textMaterial, textPosition, textCurrent;
     let descTextMaterial;
 
     let descriptionTextDuration = 2;
 
     if (section === 0) {
+      logoPosition = new THREE.Vector3(2.4, 2.5, -2);
+      logoScale = new THREE.Vector3(1.5, 1.5, 1.5);
+      logoMaterial = {
+        opacity: 1
+      }
+
       textMaterial = {
         opacity: 1
       }
@@ -171,6 +176,12 @@ const Scene = ({ section, activeFlavor, isAnimating }) => {
       }
     descriptionTextDuration = 0.5;
     } else if (section === 1) {
+      logoPosition = new THREE.Vector3(1.28, 3.3, -2);
+      logoScale = new THREE.Vector3(0.9, 0.9, 0.9);
+      logoMaterial = {
+        opacity: 1
+      }
+
       textMaterial = {
         opacity: 1
       }
@@ -183,12 +194,18 @@ const Scene = ({ section, activeFlavor, isAnimating }) => {
         opacity: 1
       }
     } else if (section >= 2 && section <= 2) {
+      logoPosition = new THREE.Vector3(1.28, 3.3, -2);
+      logoScale = new THREE.Vector3(0, 0, 0);
+      logoMaterial = {
+        opacity: 0
+      }
+
       textMaterial = {
         opacity: 0.2
       }
       textPosition = new THREE.Vector3(0, 0, -2);
       textCurrent = {
-        fontSize: 4
+        fontSize: 3.5
       }
 
       descTextMaterial = {
@@ -196,12 +213,18 @@ const Scene = ({ section, activeFlavor, isAnimating }) => {
       }
     descriptionTextDuration = 0.5;
     } else {
+      logoPosition = new THREE.Vector3(1.28, 3.3, -2);
+      logoScale = new THREE.Vector3(0, 0, 0);
+      logoMaterial = {
+        opacity: 0
+      }
+
       textMaterial = {
         opacity: 0
       }
       textPosition = new THREE.Vector3(0, 0, 0);
       textCurrent = {
-        fontSize: 4
+        fontSize: 3.5
       }
       
       descTextMaterial = {
@@ -209,6 +232,25 @@ const Scene = ({ section, activeFlavor, isAnimating }) => {
       }
     }
 
+    gsap.to(logoRef.current.position, {
+      ...logoPosition,
+      duration: 1.5,
+      ease: 'power3.inOut',
+    });
+
+    gsap.to(logoRef.current.scale, {
+      ...logoScale,
+      duration: section == 2 ? 0.1 : 1.5,
+      ease: 'power3.inOut',
+    });
+
+    gsap.to(logoRef.current.material, {
+      ...logoMaterial,
+      duration: section == 2 ? 0.1 : 1.5,
+      ease: 'power3.inOut',
+    });
+
+    // TITLE
     gsap.to(titleTextRef.current.material, {
       ...textMaterial,
       duration: 1.5,
@@ -264,46 +306,16 @@ const Scene = ({ section, activeFlavor, isAnimating }) => {
         break;
       case 3: // Lifestyle
         console.log('3')
-        canTargetPosition = new THREE.Vector3(0, 0, 4); // Move to the right
+        canTargetPosition = new THREE.Vector3(0, 5, 4); // Move to the right
         canTargetScale = new THREE.Vector3(1.2, 1.2, 1.2);
         canTargetRotation = new THREE.Vector3(0, 0.3, 0);
 
-        canLimitedTargetPosition = new THREE.Vector3(0, 0, 0); 
+        canLimitedTargetPosition = new THREE.Vector3(-20, 0, 0); 
         canLimitedTargetScale = new THREE.Vector3(0, 0, 0);
         canLimitedTargetRotation = new THREE.Vector3(0, 0, 0);
         break;
-      case 4: // Lifestyle
+      case 4: // Call to Action
         console.log('4')
-        canTargetPosition = new THREE.Vector3(0, 0, 4); // Move to the right
-        canTargetScale = new THREE.Vector3(1.2, 1.2, 1.2);
-        canTargetRotation = new THREE.Vector3(0, 2.1, 0);
-
-        canLimitedTargetPosition = new THREE.Vector3(0, 0, 0); 
-        canLimitedTargetScale = new THREE.Vector3(0, 0, 0);
-        canLimitedTargetRotation = new THREE.Vector3(0, 0, 0);
-        break;
-      case 5: // Lifestyle
-        console.log('5')
-        canTargetPosition = new THREE.Vector3(0, 0, 4); // Move to the right
-        canTargetScale = new THREE.Vector3(1.2, 1.2, 1.2);
-        canTargetRotation = new THREE.Vector3(0, 4, 0);
-
-        canLimitedTargetPosition = new THREE.Vector3(0, 0, 0); 
-        canLimitedTargetScale = new THREE.Vector3(0, 0, 0);
-        canLimitedTargetRotation = new THREE.Vector3(0, 0, 0);
-        break;
-      case 6: // Lifestyle
-        console.log('6')
-        canTargetPosition = new THREE.Vector3(0, 0, 4); // Move to the right
-        canTargetScale = new THREE.Vector3(1.1, 1.1, 1.1);
-        canTargetRotation = new THREE.Vector3(6, 0.3, 0.3);
-
-        canLimitedTargetPosition = new THREE.Vector3(0, 0, 0); 
-        canLimitedTargetScale = new THREE.Vector3(0, 0, 0);
-        canLimitedTargetRotation = new THREE.Vector3(0, 0, 0);
-        break;
-      case 7: // Call to Action
-        console.log('7')
         // Animate the can down and away to put focus on the CTA text
         canTargetPosition = new THREE.Vector3(2.8, 5, 1.5); 
         canTargetScale = new THREE.Vector3(1.2, 1.2, 1.2);
@@ -314,12 +326,12 @@ const Scene = ({ section, activeFlavor, isAnimating }) => {
         canLimitedTargetRotation = new THREE.Vector3(0, 0.2, 0);
         break;
       default: // Fallback to the first section's state
-        console.log('8')
+        console.log('5')
         canTargetPosition = new THREE.Vector3(2.8, 5, 1.5); 
         canTargetScale = new THREE.Vector3(1.2, 1.2, 1.2);
         canTargetRotation = new THREE.Vector3(0, 0, 0);
 
-        canLimitedTargetPosition = new THREE.Vector3(-10, 0, 3); 
+        canLimitedTargetPosition = new THREE.Vector3(-20, 0, 3); 
         canLimitedTargetScale = new THREE.Vector3(0, 0, 0);
         canLimitedTargetRotation = new THREE.Vector3(0, 0.2, 0);
     }
@@ -336,7 +348,7 @@ const Scene = ({ section, activeFlavor, isAnimating }) => {
   function CameraRig({ section }) {
     useFrame((state) => {
       const { pointer } = state;
-      const targetY = section === 7 ? 0.5 : pointer.y * 0.5;
+      const targetY = section === 4 ? 0.5 : pointer.y * 0.5;
 
       const targetPosition = new THREE.Vector3(
         pointer.x * 0.5,
@@ -373,6 +385,15 @@ const Scene = ({ section, activeFlavor, isAnimating }) => {
 
       {/* {section < 2 && <FloatingOrbs />} */}
 
+      <Image
+        ref={logoRef}
+        url="/logos/folia-logo.png" // The path to your image in the /public folder
+        scale={[0.1, 0.1]} // The overall size of the image in 3D units
+        position={[2.4, 2.5, -2]} // Position it anywhere in your scene
+        transparent // Set this to true if your image is a PNG with transparency
+        opacity={0}
+      />
+
       <Text
         ref={titleTextRef}
         font="/fonts/Poppins-Bold.ttf"
@@ -382,7 +403,7 @@ const Scene = ({ section, activeFlavor, isAnimating }) => {
         material-opacity={0} 
         position={[0, 0, -5]}
       >
-        FOLIA
+        {[2, 3].includes(section) ? 'FLAVORS' : 'FOLIA'}
       </Text>
 
       <Text
@@ -413,7 +434,7 @@ const Scene = ({ section, activeFlavor, isAnimating }) => {
       </group>
 
       <group ref={canLimitedGroupRef} position={[2.5, 0, 0.8]} scale={[1, 1, 1]}>
-        {(section == 7 || section == 6 || section == 8) && (
+        {(section == 4 || section == 3 || section == 5) && (
           <Float
             speed={2}
             floatIntensity={0.1}
@@ -441,7 +462,7 @@ const Scene = ({ section, activeFlavor, isAnimating }) => {
 
       <CameraRig section={section} />
 
-      {/* <Stats /> */}
+      <Stats />
     </>
   );
 };
@@ -484,6 +505,7 @@ export default function Home() {
 
   const changeSection = (newSection) => {
     if (isAnimating || newSection === section) return;
+    if (newSection < 0 || newSection >= TOTAL_SECTIONS) return; // Prevent out-of-bounds
     
     setIsAnimating(true);
     setSection(newSection);
@@ -512,15 +534,15 @@ export default function Home() {
           {section === 1 && (
             <ContinueButton 
               key="continue-btn" 
-              onClick={() => changeSection(2)} 
-              text="Explore the Collection" 
+              onClick={() => changeSection(2)}
             />
           )}
 
           {/* {section === 1 && <LandingUI onDiscoverClick={() => changeSection(2)} />} */}
           {section === 2 && <ConfiguratorUI key="config" activeFlavor={activeFlavor} onFlavorChange={setActiveFlavorId} flavors={flavors} textColor={currentTextColor} />}
-          {section === 3 && <LifestyleUI />}
-          {section === 8 && <CallToActionUI />}
+          {section === NEW_SECTION_INDEX && <OurProcessUI key="process" />}
+          {section === 4 && <LimitedEditionUI key="limited" />}
+          {section === 5 && <CallToActionUI />}
         </motion.div>
       </AnimatePresence>
 

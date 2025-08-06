@@ -2,54 +2,112 @@
 
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+// Don't forget: npm install react-icons
+import { TbChevronUp, TbChevronDown } from 'react-icons/tb';
 
-// This component receives the total sections, the current section, and a function to change sections
 export const SectionNav = ({ total, current, onChange }) => {
+  // A reusable bouncing animation for the chevrons
+  const bounceAnimation = {
+    y: [-4, 4, -4],
+    transition: {
+      duration: 1.8,
+      repeat: Infinity,
+      ease: 'easeInOut',
+    },
+  };
+
   return (
-    <div
+    <motion.div
+      // This positions the entire component on the right side
       style={{
-        position: 'fixed', // Use fixed to ensure it stays in place
+        position: 'absolute',
         top: '50%',
-        right: '2%', // Position on the right side
+        right: '2vw',
         transform: 'translateY(-50%)',
         display: 'flex',
         flexDirection: 'column',
-        gap: '20px',
-        pointerEvents: 'all',
+        alignItems: 'center',
+        gap: '15px', // Space between arrows and dots
+        pointerEvents: 'none', // The container itself isn't clickable
       }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5, delay: 1 }}
     >
-      {/* Create an array from 0 to total-1 and map over it */}
-      {[...Array(total).keys()].map(index => (
-        <div
-          key={index}
-          onClick={() => onChange(index)} // Allow clicking to change section
-          style={{
-            width: '30px',
-            height: '30px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'flex-end',
-            cursor: 'pointer',
-          }}
-        >
-          {/* We use a motion.div for the dot to animate its size and color */}
+      {/* 1. THE UP ARROW */}
+      <motion.div
+        style={{ height: '24px', pointerEvents: 'all' }}
+        whileHover={{ scale: 1.2 }}
+        whileTap={{ scale: 0.9 }}
+        onClick={() => onChange(current - 1)}
+      >
+        <AnimatePresence>
+          {/* Only show the up arrow if not on the first section */}
+          {current > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0, ...bounceAnimation }}
+              exit={{ opacity: 0, y: 10 }}
+            >
+              <TbChevronUp size={24} color="white" />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
+
+      {/* The dots for each section */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+        {Array.from({ length: total }, (_, i) => (
           <motion.div
+            key={i}
+            onClick={() => onChange(i)}
             style={{
-              width: '10px',
-              height: '10px',
+              width: '8px',
+              height: '8px',
               borderRadius: '50%',
-              backgroundColor: 'white',
-              boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
+              background: 'rgba(255, 255, 255, 0.3)',
+              position: 'relative',
+              cursor: 'pointer',
+              pointerEvents: 'all',
             }}
-            // Animate properties based on whether this dot's index matches the current section
-            animate={{
-              scale: current === index ? 1.5 : 1,
-              opacity: current === index ? 1 : 0.4,
-            }}
-            transition={{ duration: 0.3, ease: 'easeInOut' }}
-          />
-        </div>
-      ))}
-    </div>
+            whileHover={{ scale: 1.5 }}
+          >
+            {i === current && (
+              <motion.div
+                layoutId="activeSectionPill" // This animates the active state
+                style={{
+                  position: 'absolute',
+                  width: '8px',
+                  height: '8px',
+                  borderRadius: '50%',
+                  background: '#FFFFFF',
+                }}
+              />
+            )}
+          </motion.div>
+        ))}
+      </div>
+
+      {/* 2. THE DOWN ARROW */}
+      <motion.div
+        style={{ height: '24px', pointerEvents: 'all' }}
+        whileHover={{ scale: 1.2 }}
+        whileTap={{ scale: 0.9 }}
+        onClick={() => onChange(current + 1)}
+      >
+        <AnimatePresence>
+          {/* Only show the down arrow if not on the last section */}
+          {current < total - 1 && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0, ...bounceAnimation }}
+              exit={{ opacity: 0, y: -10 }}
+            >
+              <TbChevronDown size={24} color="white" />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
+    </motion.div>
   );
 };
