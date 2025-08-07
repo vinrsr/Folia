@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 // Don't forget to run: npm install react-icons
 import { FaInstagram, FaTiktok, FaTwitter } from 'react-icons/fa';
 
-export const CallToActionUI = () => {
+export const CallToActionUI = ({isMobile}) => {
   // Animation variants from previous examples
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -48,15 +48,20 @@ export const CallToActionUI = () => {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: '20px',
+        gap: isMobile ? '15px' : '20px', // Tighter vertical spacing on mobile
         textAlign: 'center',
         fontFamily: '"Poppins", sans-serif',
+        padding: '0 5%', // Add horizontal padding to prevent text from touching edges on mobile
       }}
     >
       <motion.h1 
         key="title" 
         variants={itemVariants} 
-        style={{ fontSize: '4rem', fontWeight: 700, color: '#FFFFFF' }}
+        style={{ 
+          fontSize: isMobile ? '2.8rem' : '4rem', // Smaller font on mobile
+          fontWeight: 700, 
+          color: '#FFFFFF' 
+        }}
       >
         Your Moment Awaits.
       </motion.h1>
@@ -64,7 +69,12 @@ export const CallToActionUI = () => {
       <motion.p 
         key="subtitle" 
         variants={itemVariants} 
-        style={{ fontSize: '1.2rem', color: '#B0B0B0', maxWidth: '600px', lineHeight: 1.6 }}
+        style={{ 
+          fontSize: isMobile ? '1rem' : '1.2rem', // Smaller font on mobile
+          color: '#B0B0B0', 
+          maxWidth: '600px', 
+          lineHeight: 1.6 
+        }}
       >
         Find your clarity. Folia is now chilling in the fridges of your favorite convenience stores across Indonesia.
       </motion.p>
@@ -73,7 +83,16 @@ export const CallToActionUI = () => {
       <motion.div 
         key="logos" 
         variants={itemVariants} 
-        style={{ display: 'flex', gap: '40px', alignItems: 'center', marginTop: '20px' }}
+        style={{ 
+          display: 'flex', 
+          // 4. THIS IS THE KEY RESPONSIVE CHANGE
+          flexWrap: 'wrap', // Allows logos to wrap onto a new line
+          justifyContent: 'center', // Keeps them centered when they wrap
+          gap: isMobile ? '25px' : '40px', // Adjust gap for both views
+          alignItems: 'center', 
+          marginTop: '20px',
+          maxWidth: '450px', // A max-width helps control the wrapping
+        }}
       >
         {storeLogos.map(logo => (
           <img 
@@ -81,7 +100,7 @@ export const CallToActionUI = () => {
             src={logo.path}
             alt={`${logo.name} logo`}
             style={{
-              height: '40px',
+              height: isMobile ? '30px' : '40px', // Smaller logos on mobile
               // filter: 'grayscale(100%) brightness(1.5)'
             }} // Styled to look clean and uniform
           />
@@ -92,7 +111,11 @@ export const CallToActionUI = () => {
       <motion.div 
         key="divider" 
         variants={itemVariants} 
-        style={{ width: '80px', height: '2px', background: '#444', marginTop: '40px', marginBottom: '20px' }}
+        style={{ 
+          fontSize: isMobile ? '1.2rem' : '1.5rem', // Smaller font
+          fontWeight: 600, 
+          color: '#E5E4E2' 
+        }}
       />
       
       {/* Social Media Call to Action */}

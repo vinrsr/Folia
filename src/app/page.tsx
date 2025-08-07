@@ -28,6 +28,7 @@ import { FloatingOrbs } from '@/components/FloatingOrbs';
 import { ContinueButton } from '@/components/ContinueButton';
 import { LimitedEditionUI } from '@/components/LimitedEditionUI';
 import { OurProcessUI } from '@/components/OurProcessUI';
+import { useWindowSize } from '@/hooks/useWindowSize'
 import * as THREE from 'three';
 import gsap from 'gsap';
 
@@ -114,15 +115,12 @@ const flavors = [
 const TOTAL_SECTIONS = 6;
 const NEW_SECTION_INDEX = 3;
 
-const Scene = ({ section, activeFlavor, isAnimating }) => {
+const Scene = ({ section, activeFlavor, isAnimating, isMobile }) => {
   const canGroupRef = useRef(null);
   const canLimitedGroupRef = useRef(null);
   const logoRef = useRef(null); 
   const titleTextRef = useRef(null); 
   const descriptionTextRef = useRef(null); 
-
-  // --- 2. MOVE THE HOOKS AND LOGIC INSIDE ---
-  // const loadedTextures = useTexture(flavors.map(f => f.texturePath));
   
   const loadedTextures = useTexture(flavors.map(f => f.texturePath), (textures) => {
     (Array.isArray(textures) ? textures : [textures]).forEach(texture => {
@@ -152,13 +150,14 @@ const Scene = ({ section, activeFlavor, isAnimating }) => {
 
     let logoPosition, logoScale, logoMaterial;
     let textMaterial, textPosition, textCurrent;
-    let descTextMaterial;
+    let descTextMaterial, descTextCurrent;
 
     let descriptionTextDuration = 2;
 
     if (section === 0) {
       logoPosition = new THREE.Vector3(2.4, 2.5, -2);
       logoScale = new THREE.Vector3(1.5, 1.5, 1.5);
+
       logoMaterial = {
         opacity: 1
       }
@@ -174,7 +173,20 @@ const Scene = ({ section, activeFlavor, isAnimating }) => {
       descTextMaterial = {
         opacity: 0
       }
-    descriptionTextDuration = 0.5;
+      descTextCurrent= {
+        fontSize: .4,
+        maxWidth: 12
+      }
+      descriptionTextDuration = 0.5;
+
+      if (isMobile) {
+        logoPosition = new THREE.Vector3(0.7, 0.75, -2);
+        logoScale = new THREE.Vector3(0.5, 0.5, 0.5);
+        textCurrent = {
+          fontSize: 1.1
+        }
+      }
+
     } else if (section === 1) {
       logoPosition = new THREE.Vector3(1.28, 3.3, -2);
       logoScale = new THREE.Vector3(0.9, 0.9, 0.9);
@@ -193,7 +205,25 @@ const Scene = ({ section, activeFlavor, isAnimating }) => {
       descTextMaterial = {
         opacity: 1
       }
-    } else if (section >= 2 && section <= 2) {
+      descTextCurrent= {
+        fontSize: .4,
+        maxWidth: 12
+      };
+
+      if (isMobile) {
+        logoPosition = new THREE.Vector3(0.7, 2.75, -2);
+        logoScale = new THREE.Vector3(0.5, 0.5, 0.5);
+
+        textCurrent = {
+          fontSize: 1.1
+        }
+
+        descTextCurrent= {
+          fontSize: .3,
+          maxWidth: 6
+        };
+      }
+    } else if (section === 2) {
       logoPosition = new THREE.Vector3(1.28, 3.3, -2);
       logoScale = new THREE.Vector3(0, 0, 0);
       logoMaterial = {
@@ -211,7 +241,18 @@ const Scene = ({ section, activeFlavor, isAnimating }) => {
       descTextMaterial = {
         opacity: 0
       }
-    descriptionTextDuration = 0.5;
+      descTextCurrent= {
+        fontSize: .4,
+        maxWidth: 12
+      };
+      descriptionTextDuration = 0.5;
+
+      if (isMobile) {
+        textCurrent = {
+          fontSize: 0.75
+        }
+      }
+
     } else {
       logoPosition = new THREE.Vector3(1.28, 3.3, -2);
       logoScale = new THREE.Vector3(0, 0, 0);
@@ -230,6 +271,10 @@ const Scene = ({ section, activeFlavor, isAnimating }) => {
       descTextMaterial = {
         opacity: 0
       }
+      descTextCurrent= {
+        fontSize: .4,
+        maxWidth: 12
+      };
     }
 
     gsap.to(logoRef.current.position, {
@@ -262,6 +307,13 @@ const Scene = ({ section, activeFlavor, isAnimating }) => {
       ease: 'power3.inOut',
     });
     gsap.to(titleTextRef.current, { ...textCurrent, duration: 1.5, ease: 'power3.inOut' });
+
+    // DESCRIPTION
+    gsap.to(descriptionTextRef.current, {
+      ...descTextCurrent,
+      duration: descriptionTextDuration,
+      ease: 'power3.inOut',
+    });
 
     gsap.to(descriptionTextRef.current.material, {
       ...descTextMaterial,
@@ -303,6 +355,11 @@ const Scene = ({ section, activeFlavor, isAnimating }) => {
         canLimitedTargetPosition = new THREE.Vector3(0, 0, 0); 
         canLimitedTargetScale = new THREE.Vector3(0, 0, 0);
         canLimitedTargetRotation = new THREE.Vector3(0, 0, 0);
+
+        if (isMobile) {
+          canTargetPosition = new THREE.Vector3(0, 0, 1);
+        }
+
         break;
       case 3: // Lifestyle
         console.log('3')
@@ -324,6 +381,10 @@ const Scene = ({ section, activeFlavor, isAnimating }) => {
         canLimitedTargetPosition = new THREE.Vector3(-0.1, 0, 3); 
         canLimitedTargetScale = new THREE.Vector3(1.1, 1.1, 1.1);
         canLimitedTargetRotation = new THREE.Vector3(0, 0.2, 0);
+
+        if (isMobile) {
+          canLimitedTargetPosition = new THREE.Vector3(-0.1, 0, 1);
+        }
         break;
       default: // Fallback to the first section's state
         console.log('5')
@@ -343,7 +404,7 @@ const Scene = ({ section, activeFlavor, isAnimating }) => {
     gsap.to(canLimitedGroupRef.current.position, { ...canLimitedTargetPosition, duration: 1.5, ease: 'power3.inOut' });
     gsap.to(canLimitedGroupRef.current.scale, { ...canLimitedTargetScale, duration: 1.5, ease: 'power3.inOut' });
     gsap.to(canLimitedGroupRef.current.rotation, { ...canLimitedTargetRotation, duration: 1.5, ease: 'power3.inOut' });
-  }, [section]);
+  }, [section, isMobile]);
 
   function CameraRig({ section }) {
     useFrame((state) => {
@@ -362,6 +423,8 @@ const Scene = ({ section, activeFlavor, isAnimating }) => {
 
     return null;
   }
+
+  // console.log('isMobile', isMobile)
 
   return (
     <>
@@ -389,15 +452,17 @@ const Scene = ({ section, activeFlavor, isAnimating }) => {
         ref={logoRef}
         url="/logos/folia-logo.png" // The path to your image in the /public folder
         scale={[0.1, 0.1]} // The overall size of the image in 3D units
-        position={[2.4, 2.5, -2]} // Position it anywhere in your scene
+        position={[0.7, 0.75, -2]} // Position it anywhere in your scene
         transparent // Set this to true if your image is a PNG with transparency
         opacity={0}
       />
 
+      {}
+
       <Text
         ref={titleTextRef}
         font="/fonts/Poppins-Bold.ttf"
-        fontSize={4}
+        fontSize={isMobile ? 1.1 : 4}
         color="#272d56"
         material-toneMapped={false}
         material-opacity={0} 
@@ -479,6 +544,9 @@ export default function Home() {
   const currentBackgroundColor = [2, 3, 4, 5, 6].includes(section) ? activeFlavor.backgroundColor : sectionColors[section];
   const currentTextColor = activeFlavor.textColor;
 
+  const { width } = useWindowSize();
+  const isMobile = width < 768;
+
   useEffect(() => {
     if (!mainRef.current) return;
 
@@ -524,6 +592,7 @@ export default function Home() {
             section={section}
             activeFlavor={activeFlavor}
             isAnimating={isAnimating}
+            isMobile={isMobile}
           />
         </Suspense>
       </Canvas>
@@ -539,10 +608,10 @@ export default function Home() {
           )}
 
           {/* {section === 1 && <LandingUI onDiscoverClick={() => changeSection(2)} />} */}
-          {section === 2 && <ConfiguratorUI key="config" activeFlavor={activeFlavor} onFlavorChange={setActiveFlavorId} flavors={flavors} textColor={currentTextColor} />}
-          {section === NEW_SECTION_INDEX && <OurProcessUI key="process" />}
-          {section === 4 && <LimitedEditionUI key="limited" />}
-          {section === 5 && <CallToActionUI />}
+          {section === 2 && <ConfiguratorUI isMobile={isMobile} key="config" activeFlavor={activeFlavor} onFlavorChange={setActiveFlavorId} flavors={flavors} textColor={currentTextColor} />}
+          {section === NEW_SECTION_INDEX && <OurProcessUI isMobile={isMobile} key="process" />}
+          {section === 4 && <LimitedEditionUI isMobile={isMobile} key="limited" />}
+          {section === 5 && <CallToActionUI isMobile={isMobile} />}
         </motion.div>
       </AnimatePresence>
 

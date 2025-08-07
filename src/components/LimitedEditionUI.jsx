@@ -8,7 +8,7 @@ import {
     TbArrowBigRight,
 } from 'react-icons/tb';
 
-export const LimitedEditionUI = () => {
+export const LimitedEditionUI = ({isMobile}) => {
   // Animation variants for a staggered entrance
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -50,7 +50,7 @@ export const LimitedEditionUI = () => {
         fontFamily: '"Poppins", sans-serif',
         pointerEvents: 'none',
         color: 'white',
-        padding: '3% 0', // Add some padding to keep elements from hitting the edges
+        padding: isMobile ? '18% 0 10% 0' : '3% 0', 
       }}
     >
       {/* 1. TOP CLUSTER: "COMING SOON" and "LIMITED EDITION" */}
@@ -62,26 +62,16 @@ export const LimitedEditionUI = () => {
         <motion.h1
           key="title"
           variants={itemVariants}
-          style={{ color: '#312581', fontSize: '4rem', fontWeight: 700, textShadow: '0 4px 15px rgba(0,0,0,0.2)' }}
+          style={{ 
+            color: '#312581', 
+            // 5. Make font size responsive
+            fontSize: isMobile ? '2.5rem' : '4rem', 
+            fontWeight: 700, 
+            textShadow: '0 4px 15px rgba(0,0,0,0.2)' 
+          }}
         >
           COMING SOON
         </motion.h1>
-
-        {/* <motion.div
-          key="badge"
-          variants={itemVariants}
-          style={{
-            background: 'rgba(0, 0, 0, 0.3)',
-            padding: '8px 20px',
-            borderRadius: '50px',
-            fontWeight: 600,
-            letterSpacing: '1px',
-            backdropFilter: 'blur(5px)',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
-          }}
-        >
-          LIMITED EDITION
-        </motion.div> */}
       </motion.div>
 
       {/* The empty space in the middle is where your 3D can will be the hero */}
@@ -96,9 +86,9 @@ export const LimitedEditionUI = () => {
           // Removed absolute positioning. It will now sit at the bottom of the flex container.
           display: 'flex',
           alignItems: 'center',
-          gap: '12px',
+          gap: isMobile ? '10px' : '12px',
           background: 'rgba(49, 37, 129, 0.3)',
-          padding: '10px 22px',
+          padding: isMobile ? '8px 18px' : '10px 22px',
           borderRadius: '50px',
           backdropFilter: 'blur(5px)',
           border: '1px solid rgba(255, 255, 255, 0.2)',
@@ -106,7 +96,13 @@ export const LimitedEditionUI = () => {
       >
         {/* <TbHandGrab size={24} /> */}
         <TbArrowBigLeft size={24} />
-        <span style={{ fontWeight: 500 }}>GRAB CAN TO ROTATE</span>
+        <span style={{ 
+          fontWeight: 500, 
+          // 7. Adjust text size within the indicator
+          fontSize: isMobile ? '0.8rem' : '1rem' 
+        }}>
+          GRAB CAN TO ROTATE
+        </span>
         <TbArrowBigRight size={24} />
       </motion.div>
 

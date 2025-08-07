@@ -25,7 +25,7 @@ const processSteps = [
   },
 ];
 
-export const OurProcessUI = () => {
+export const OurProcessUI = ({ isMobile }) => {
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: { 
@@ -57,22 +57,34 @@ export const OurProcessUI = () => {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        color: '#E5E4E2', // A nice, soft white for text
+        color: '#E5E4E2',
         textAlign: 'center',
         fontFamily: '"Poppins", sans-serif',
+        padding: isMobile ? '0 15%' : '0',
+        // backgroundColor: 'yellow'
       }}
     >
-      <motion.h1 key="title" variants={itemVariants} style={{ fontSize: '3.5rem', fontWeight: 700, marginBottom: '80px' }}>
+      <motion.h1 
+        key="title" 
+        variants={itemVariants} 
+        style={{ 
+          fontSize: isMobile ? '2.5rem' : '3.5rem', // Smaller font on mobile
+          fontWeight: 700, 
+          marginBottom: isMobile ? '40px' : '80px' 
+        }}
+      >
         Pure & Simple
       </motion.h1>
 
       <motion.div
         key="steps-container"
-        variants={containerVariants} // Use container variants again for nested stagger
+        variants={containerVariants}
         style={{
           display: 'flex',
+          // 1. THIS IS THE KEY FIX: On mobile it's a column (stacking rows), on desktop it's a row (side-by-side columns).
+          flexDirection: isMobile ? 'column' : 'row',
           justifyContent: 'center',
-          gap: '80px', // Space between the columns
+          gap: isMobile ? '40px' : '80px',
           maxWidth: '1200px',
           width: '100%',
         }}
@@ -82,16 +94,45 @@ export const OurProcessUI = () => {
             key={step.title}
             variants={itemVariants}
             style={{
-              flex: 1, // Each column takes up equal space
               display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
+              // On desktop, the items in the column are centered vertically.
+              // On mobile, the items in the row have the icon on the left.
+              flexDirection: isMobile ? 'row' : 'column',
+              alignItems: isMobile ? 'center' : 'center', // Center vertically in both layouts
+              textAlign: isMobile ? 'left' : 'center',
               gap: '20px',
+              // On desktop, each column takes equal space.
+              flex: isMobile ? 'none' : 1, 
             }}
           >
-            {step.icon}
-            <h2 style={{ fontSize: '1.8rem', fontWeight: 600 }}>{step.title}</h2>
-            <p style={{ maxWidth: '300px', lineHeight: 1.6 }}>{step.description}</p>
+            {/* Using a wrapper for the icon to control its size and prevent shrinking */}
+            <div style={{ flexShrink: 0 }}>
+              {React.cloneElement(step.icon, { size: isMobile ? 50 : 48 })}
+            </div>
+            
+            <div style={{
+              // display: 'flex',
+              flexDirection: 'column',
+              // gap: '5px',
+              // backgroundColor: 'blue'
+            }}>
+              <h2 style={{ 
+                fontSize: isMobile ? '1.2rem' : '1.8rem', // Made mobile font even smaller
+                fontWeight: 600, 
+                // backgroundColor: 'red'
+              }}>
+                {step.title}
+              </h2>
+              <p style={{ 
+                maxWidth: '300px', 
+                // backgroundColor: 'yellow',
+                lineHeight: 1.6, 
+                opacity: 0.8,
+                fontSize: isMobile ? '0.9rem' : '1rem' // Added responsive font size for description
+              }}>
+                {step.description}
+              </p>
+            </div>
           </motion.div>
         ))}
       </motion.div>

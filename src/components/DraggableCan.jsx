@@ -6,7 +6,7 @@ import { a, useSpring } from '@react-spring/three'; // We will use react-spring 
 import { Sparkles } from '@react-three/drei';
 import { Model as CanOriginal } from '@/components/canOriginal';
 
-export const DraggableCan = ({ isAnimating, section, ...props }) => {
+export const DraggableCan = ({isAnimating, section, ...props }) => {
   // A ref for the group. We don't need to manually update it anymore.
   const groupRef = useRef();
 
@@ -69,7 +69,7 @@ export const DraggableCan = ({ isAnimating, section, ...props }) => {
                     scale={15}
                     size={10}
                     speed={0.4}
-                    color={"#white"}
+                    color={"white"}
                 />
                 <Sparkles 
                     count={100}
