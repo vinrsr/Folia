@@ -7,7 +7,7 @@ import {
   Lightformer,
   Float,
   ContactShadows,
-  Stats,
+  // Stats,
   useTexture,
   Text,
   Image
