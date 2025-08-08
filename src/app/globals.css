@@ -44,6 +44,13 @@ body {
   }
 }
 
+button,
+a,
+div[onClick],
+[role="button"] {
+  -webkit-tap-highlight-color: transparent !important;
+}
+
 canvas {
   opacity: 0;
   touch-action: none;

@@ -43,6 +43,7 @@ export const ContinueButton = ({ onClick }) => {
         transform: 'translateX(-50%)',
         cursor: 'pointer',
         pointerEvents: 'all',
+        WebkitTapHighlightColor: 'transparent',
       }}
     >
       <motion.svg

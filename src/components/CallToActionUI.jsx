@@ -51,14 +51,14 @@ export const CallToActionUI = ({isMobile}) => {
         gap: isMobile ? '15px' : '20px', // Tighter vertical spacing on mobile
         textAlign: 'center',
         fontFamily: '"Poppins", sans-serif',
-        padding: '0 5%', // Add horizontal padding to prevent text from touching edges on mobile
+        padding: '0 10%', // Add horizontal padding to prevent text from touching edges on mobile
       }}
     >
       <motion.h1 
         key="title" 
         variants={itemVariants} 
         style={{ 
-          fontSize: isMobile ? '2.8rem' : '4rem', // Smaller font on mobile
+          fontSize: isMobile ? '2.2rem' : '4rem', // Smaller font on mobile
           fontWeight: 700, 
           color: '#FFFFFF' 
         }}
@@ -70,7 +70,7 @@ export const CallToActionUI = ({isMobile}) => {
         key="subtitle" 
         variants={itemVariants} 
         style={{ 
-          fontSize: isMobile ? '1rem' : '1.2rem', // Smaller font on mobile
+          fontSize: isMobile ? '0.8rem' : '1.2rem', // Smaller font on mobile
           color: '#B0B0B0', 
           maxWidth: '600px', 
           lineHeight: 1.6 
@@ -100,7 +100,7 @@ export const CallToActionUI = ({isMobile}) => {
             src={logo.path}
             alt={`${logo.name} logo`}
             style={{
-              height: isMobile ? '30px' : '40px', // Smaller logos on mobile
+              height: isMobile ? '18px' : '40px', // Smaller logos on mobile
               // filter: 'grayscale(100%) brightness(1.5)'
             }} // Styled to look clean and uniform
           />
@@ -122,7 +122,11 @@ export const CallToActionUI = ({isMobile}) => {
       <motion.h2 
         key="social-title" 
         variants={itemVariants} 
-        style={{ fontSize: '1.5rem', fontWeight: 600, color: '#E5E4E2' }}
+        style={{
+          fontSize: isMobile ? '0.8rem' : '1.5rem',
+          fontWeight: 600,
+          color: '#E5E4E2'
+        }}
       >
         Join the Folia Vibe
       </motion.h2>
@@ -133,13 +137,13 @@ export const CallToActionUI = ({isMobile}) => {
         style={{ display: 'flex', gap: '30px' }}
       >
         <motion.div whileHover={{ scale: 1.2, color: '#FFFFFF' }} style={socialIconStyle}>
-          <FaInstagram size={32} />
+          <FaInstagram size={isMobile ? 25 : 32} />
         </motion.div>
         <motion.div whileHover={{ scale: 1.2, color: '#FFFFFF' }} style={socialIconStyle}>
-          <FaTiktok size={32} />
+          <FaTiktok size={isMobile ? 25 : 32} />
         </motion.div>
         <motion.div whileHover={{ scale: 1.2, color: '#FFFFFF' }} style={socialIconStyle}>
-          <FaTwitter size={32} />
+          <FaTwitter size={isMobile ? 25 : 32} />
         </motion.div>
       </motion.div>
 
@@ -152,7 +156,8 @@ export const CallToActionUI = ({isMobile}) => {
           textAlign: 'center',
           fontFamily: '"Poppins", sans-serif',
           color: '#666', // A muted color so it doesn't distract
-          fontSize: '0.9rem',
+          // fontSize: isMobile ? '0.7rem' : '0.9rem',
+          fontSize: isMobile ? '0.7rem' : '0.9rem',
           pointerEvents: 'none', // Not interactive
         }}
         initial={{ opacity: 0 }}

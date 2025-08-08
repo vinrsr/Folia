@@ -2,7 +2,115 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { TbListDetails } from 'react-icons/tb';
+import { TbListDetails, TbX } from 'react-icons/tb';
+import { FaTimes } from 'react-icons/fa';
+
+const DetailsModal = ({ flavor, textColor, onClose, activeFlavor }) => {
+  // This prevents clicks inside the modal content from closing it
+  const stopPropagation = (e) => e.stopPropagation();
+
+  return (
+    // The semi-transparent backdrop
+    <motion.div
+      onClick={onClose}
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        background: 'rgba(0, 0, 0, 0.7)',
+        display: 'flex',
+        alignItems: 'flex-end', // Aligns the modal to the bottom
+        justifyContent: 'center',
+        zIndex: 50, // Ensures it's on top of everything
+        pointerEvents: 'all',
+      }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      {/* The main content panel that slides up */}
+      <motion.div
+        onClick={stopPropagation}
+        style={{
+          position: 'relative', // 1. This is crucial for positioning the 'X' button inside
+          width: '100%',
+          maxWidth: '500px', // Prevents it from being too wide on tablets
+          // background: '#272d56', // A dark, modern background
+          // background: 'rgba(39, 45, 86, 0.9)', // A dark, modern background
+          background: activeFlavor.color, // A dark, modern background
+          borderTopLeftRadius: '20px',
+          borderTopRightRadius: '20px',
+          padding: '40px 20px 20px 20px', // Adjusted padding to make room
+          color: textColor, // A nice, soft white for readability
+          fontFamily: '"Poppins", sans-serif',
+        }}
+        initial={{ y: '100%' }} // Starts off-screen at the bottom
+        animate={{ y: '0%' }}   // Animates to its final position
+        exit={{ y: '100%' }}  // Slides back down on exit
+        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+      >
+        <motion.div
+          onClick={onClose}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => e.key === 'Enter' && onClose()}
+          style={{
+            position: 'absolute',
+            top: '15px',
+            right: '15px',
+            background: 'rgba(0, 0, 0, 0.5)',
+            border: 'none',
+            borderRadius: '50%',
+            width: '32px',
+            height: '32px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            color: '#F5F5F7',
+            textTransform: 'none'
+          }}
+        >
+          {/* <TbX size={20} style={{ color: 'white', zIndex: 9999 }} /> */}
+          <FaTimes size={20} /> 
+        </motion.div>
+
+        <h1 style={{ fontSize: '2.5rem', fontWeight: 700, textAlign: 'center', marginBottom: '30px' }}>
+          {flavor.name}
+        </h1>
+
+        <div>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: 600 }}>Ingredients</h2>
+          <ul style={{ listStyle: 'none', padding: 0, marginTop: '15px', opacity: 0.8 }}>
+            {flavor.ingredients.map(ing => (
+              <li key={ing.name} style={{ marginBottom: '10px' }}>
+                <b style={{ display: 'block' }}>{ing.name}</b>
+                {ing.description}
+              </li>
+            ))}
+          </ul>
+        </div>
+        
+        <div style={{ marginTop: '30px' }}>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: 600 }}>Nutrition Facts</h2>
+          <div style={{ marginTop: '15px', borderTop: `2px solid #444`, paddingTop: '15px', opacity: 0.8 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+              <span>Calories</span><b>{flavor.nutrition.calories}</b>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+              <span>Total Sugars</span><b>{flavor.nutrition.sugar}</b>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span>Carbohydrates</span><b>{flavor.nutrition.carbohydrates}</b>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+};
 
 export const ConfiguratorUI = ({ isMobile, activeFlavor, onFlavorChange, flavors, textColor }) => {
   
@@ -19,88 +127,6 @@ export const ConfiguratorUI = ({ isMobile, activeFlavor, onFlavorChange, flavors
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0 },
     exit: { opacity: 0, y: -20 }
-  };
-
-  // A new component for the pop-up modal
-  const DetailsModal = ({ flavor, textColor, onClose }) => {
-    // This prevents clicks inside the modal content from closing it
-    const stopPropagation = (e) => e.stopPropagation();
-
-    return (
-      // The semi-transparent backdrop
-      <motion.div
-        onClick={onClose}
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          background: 'rgba(0, 0, 0, 0.7)',
-          display: 'flex',
-          alignItems: 'flex-end', // Aligns the modal to the bottom
-          justifyContent: 'center',
-          zIndex: 50, // Ensures it's on top of everything
-          pointerEvents: 'all',
-        }}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-      >
-        {/* The main content panel that slides up */}
-        <motion.div
-          onClick={stopPropagation}
-          style={{
-            width: '100%',
-            maxWidth: '500px', // Prevents it from being too wide on tablets
-            // background: '#272d56', // A dark, modern background
-            // background: 'rgba(39, 45, 86, 0.9)', // A dark, modern background
-            background: activeFlavor.color, // A dark, modern background
-            borderTopLeftRadius: '20px',
-            borderTopRightRadius: '20px',
-            padding: '40px 20px',
-            color: textColor, // A nice, soft white for readability
-            fontFamily: '"Poppins", sans-serif',
-          }}
-          initial={{ y: '100%' }} // Starts off-screen at the bottom
-          animate={{ y: '0%' }}   // Animates to its final position
-          exit={{ y: '100%' }}  // Slides back down on exit
-          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-        >
-          {/* We reuse the details layout from the desktop view, styled for mobile */}
-          <h1 style={{ fontSize: '2.5rem', fontWeight: 700, textAlign: 'center', marginBottom: '30px' }}>
-            {flavor.name}
-          </h1>
-
-          <div>
-            <h2 style={{ fontSize: '1.5rem', fontWeight: 600 }}>Ingredients</h2>
-            <ul style={{ listStyle: 'none', padding: 0, marginTop: '15px', opacity: 0.8 }}>
-              {flavor.ingredients.map(ing => (
-                <li key={ing.name} style={{ marginBottom: '10px' }}>
-                  <b style={{ display: 'block' }}>{ing.name}</b>
-                  {ing.description}
-                </li>
-              ))}
-            </ul>
-          </div>
-          
-          <div style={{ marginTop: '30px' }}>
-            <h2 style={{ fontSize: '1.5rem', fontWeight: 600 }}>Nutrition Facts</h2>
-            <div style={{ marginTop: '15px', borderTop: `2px solid #444`, paddingTop: '15px', opacity: 0.8 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                <span>Calories</span><b>{flavor.nutrition.calories}</b>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                <span>Total Sugars</span><b>{flavor.nutrition.sugar}</b>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span>Carbohydrates</span><b>{flavor.nutrition.carbohydrates}</b>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-      </motion.div>
-    );
   };
 
   return (
@@ -197,11 +223,10 @@ export const ConfiguratorUI = ({ isMobile, activeFlavor, onFlavorChange, flavors
           </>
         )}
 
-        {/* 2. THE NEW "DETAILS" BUTTON (MOBILE ONLY) */}
         {isMobile && (
           <div style={{
             position: 'absolute',
-            bottom: '17%',
+            bottom: '18%',
             left: '50%',
             transform: 'translateX(-50%)',
             display: 'flex',
@@ -228,8 +253,6 @@ export const ConfiguratorUI = ({ isMobile, activeFlavor, onFlavorChange, flavors
                 cursor: 'pointer',
                 textTransform: 'none'
               }}
-              // whileHover={{ scale: 1.05 }}
-              // whileTap={{ scale: 0.95 }}
             >
               <TbListDetails size={20} />
               Details
@@ -237,7 +260,6 @@ export const ConfiguratorUI = ({ isMobile, activeFlavor, onFlavorChange, flavors
           </div>
         )}
 
-        {/* --- REDESIGNED Flavor Selector at the Bottom --- */}
         <div style={{
           position: 'absolute',
           bottom: '5%',
@@ -266,15 +288,13 @@ export const ConfiguratorUI = ({ isMobile, activeFlavor, onFlavorChange, flavors
                 justifyContent: 'center',
                 gap: '10px',
                 cursor: 'pointer',
-                width: isMobile ? '80px' : '110px', 
-                height: isMobile ? '80px' : '110px',
-                // width: '90px', // 1. WIDENED the container
+                width: isMobile ? '65px' : '110px', 
+                height: isMobile ? '65px' : '110px',
+                WebkitTapHighlightColor: 'transparent',
               }}
             >
 
-              {/* --- 4. THE HOVER PILL --- */}
               <AnimatePresence>
-                {/* This pill ONLY appears if the item is hovered AND is NOT the active one */}
                 {hoveredFlavorId === flavor.id && activeFlavor.id !== flavor.id && (
                   <motion.div
                     initial={{ opacity: 0 }}
@@ -326,7 +346,7 @@ export const ConfiguratorUI = ({ isMobile, activeFlavor, onFlavorChange, flavors
                 alignItems: 'center',
                 justifyContent: 'center',
                 padding: '10px',
-                fontSize: isMobile ? '0.7em' : '1em',
+                fontSize: isMobile ? '0.6em' : '1em',
               }}>
                 {flavor.name}
               </span>
@@ -341,6 +361,7 @@ export const ConfiguratorUI = ({ isMobile, activeFlavor, onFlavorChange, flavors
             flavor={activeFlavor} 
             textColor={textColor} 
             onClose={() => setIsModalOpen(false)} 
+            activeFlavor={activeFlavor}
           />
         )}
       </AnimatePresence>

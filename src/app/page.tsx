@@ -1,7 +1,7 @@
 'use client';
 
 import { Suspense, useState, useRef, useEffect } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import {
   Environment,
   Lightformer,
@@ -129,11 +129,15 @@ const Scene = ({ section, activeFlavor, isAnimating, isMobile }: {
   const logoRef = useRef<THREE.Mesh>(null); 
   const titleTextRef = useRef<THREE.Mesh>(null); 
   const descriptionTextRef = useRef<THREE.Mesh>(null); 
+
+  const { gl } = useThree();
   
   const loadedTextures = useTexture(flavors.map(f => f.texturePath), (textures) => {
     (Array.isArray(textures) ? textures : [textures]).forEach(texture => {
       texture.flipY = false;
       texture.colorSpace = "srgb"; 
+
+      texture.anisotropy = gl.capabilities.getMaxAnisotropy();
     });
   });
 
@@ -143,6 +147,8 @@ const Scene = ({ section, activeFlavor, isAnimating, isMobile }: {
     // We apply the same corrections to this texture as well.
     texture.flipY = false;
     texture.colorSpace = "srgb";
+
+    texture.anisotropy = gl.capabilities.getMaxAnisotropy();
   });
 
   const activeTexture = loadedTextures[flavors.indexOf(activeFlavor)];
@@ -193,6 +199,11 @@ const Scene = ({ section, activeFlavor, isAnimating, isMobile }: {
         textCurrent = {
           fontSize: 1.1
         }
+
+        descTextCurrent= {
+          fontSize: .3,
+          maxWidth: 6
+        };
       }
 
     } else if (section === 1) {
@@ -259,6 +270,11 @@ const Scene = ({ section, activeFlavor, isAnimating, isMobile }: {
         textCurrent = {
           fontSize: 0.75
         }
+
+        descTextCurrent= {
+          fontSize: .3,
+          maxWidth: 6
+        };
       }
 
     } else {
@@ -362,7 +378,7 @@ const Scene = ({ section, activeFlavor, isAnimating, isMobile }: {
         canLimitedTargetRotation = new THREE.Vector3(0, 0, 0);
 
         if (isMobile) {
-          canTargetPosition = new THREE.Vector3(0, 0, 1);
+          canTargetPosition = new THREE.Vector3(0, 0.1, 1);
         }
 
         break;
@@ -585,6 +601,7 @@ export default function Home() {
       <Canvas
         shadows
         camera={{ position: [0, 0, 8], fov: 50 }}
+        dpr={[1, 1.5]}
       >
         <AnimatedBackground color={currentBackgroundColor} />
         <Suspense fallback={null}>

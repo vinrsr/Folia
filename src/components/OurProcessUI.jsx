@@ -68,7 +68,7 @@ export const OurProcessUI = ({ isMobile }) => {
         key="title" 
         variants={itemVariants} 
         style={{ 
-          fontSize: isMobile ? '2.5rem' : '3.5rem', // Smaller font on mobile
+          fontSize: isMobile ? '2rem' : '3.5rem', // Smaller font on mobile
           fontWeight: 700, 
           marginBottom: isMobile ? '40px' : '80px' 
         }}
@@ -107,7 +107,7 @@ export const OurProcessUI = ({ isMobile }) => {
           >
             {/* Using a wrapper for the icon to control its size and prevent shrinking */}
             <div style={{ flexShrink: 0 }}>
-              {React.cloneElement(step.icon, { size: isMobile ? 50 : 48 })}
+              {React.cloneElement(step.icon, { size: isMobile ? 40 : 48 })}
             </div>
             
             <div style={{
@@ -117,7 +117,7 @@ export const OurProcessUI = ({ isMobile }) => {
               // backgroundColor: 'blue'
             }}>
               <h2 style={{ 
-                fontSize: isMobile ? '1.2rem' : '1.8rem', // Made mobile font even smaller
+                fontSize: isMobile ? '1rem' : '1.8rem', // Made mobile font even smaller
                 fontWeight: 600, 
                 // backgroundColor: 'red'
               }}>
@@ -126,7 +126,7 @@ export const OurProcessUI = ({ isMobile }) => {
               <p style={{ 
                 maxWidth: '300px', 
                 // backgroundColor: 'yellow',
-                lineHeight: 1.6, 
+                lineHeight: isMobile ? 1.2 : 1.6, 
                 opacity: 0.8,
                 fontSize: isMobile ? '0.9rem' : '1rem' // Added responsive font size for description
               }}>
