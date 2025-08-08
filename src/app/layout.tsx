@@ -15,6 +15,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Folia",
   description: "New wave of sparkling botanical water.",
+  icons: {
+    icon: "/icon.png", // /public path
+  },
 };
 
 export default function RootLayout({
