@@ -542,7 +542,7 @@ const Scene = ({ section, activeFlavor, isAnimating, isMobile }: {
 
       <CameraRig section={section} />
 
-      <Stats />
+      {/* <Stats /> */}
     </>
   );
 };
@@ -561,7 +561,6 @@ export default function Home() {
 
   const { width } = useWindowSize();
   const isMobile = (width || 1920) < 768;
-  console.log('width', width)
 
   useEffect(() => {
     if (!mainRef.current) return;
