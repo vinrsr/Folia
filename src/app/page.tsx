@@ -8,23 +8,17 @@ import {
   Float,
   ContactShadows,
   Stats,
-  OrbitControls,
   useTexture,
   Text,
   Image
 } from '@react-three/drei';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Model as CanOriginal } from '@/components/canOriginal';
-import { LandingUI } from '@/components/LandingUI';
 import { ConfiguratorUI } from '@/components/ConfiguratorUI';
-// import { IngredientsUI } from '@/components/IngredientsUI';
-import { LifestyleUI } from '@/components/LifestyleUI';
-import { LifestyleScene } from '@/components/LifestyleScene';
 import { CallToActionUI } from '@/components/CallToActionUI';
 import { DraggableCan } from '@/components/DraggableCan';
 import { SectionNav } from '@/components/SectionNav';
 import { AnimatedBackground } from '@/components/AnimatedBackground';
-import { FloatingOrbs } from '@/components/FloatingOrbs';
 import { ContinueButton } from '@/components/ContinueButton';
 import { LimitedEditionUI } from '@/components/LimitedEditionUI';
 import { OurProcessUI } from '@/components/OurProcessUI';
@@ -115,12 +109,26 @@ const flavors = [
 const TOTAL_SECTIONS = 6;
 const NEW_SECTION_INDEX = 3;
 
-const Scene = ({ section, activeFlavor, isAnimating, isMobile }) => {
-  const canGroupRef = useRef(null);
-  const canLimitedGroupRef = useRef(null);
-  const logoRef = useRef(null); 
-  const titleTextRef = useRef(null); 
-  const descriptionTextRef = useRef(null); 
+const Scene = ({ section, activeFlavor, isAnimating, isMobile }: {
+  section: number;
+  activeFlavor: {
+    id: string;
+    name: string;
+    color: string;
+    backgroundColor: string;
+    textColor: string;
+    texturePath: string;
+    ingredients: Array<{ name: string; description: string }>;
+    nutrition: { calories: string; sugar: string; carbohydrates: string };
+  };
+  isAnimating: boolean;
+  isMobile: boolean;
+}) => {
+  const canGroupRef = useRef<THREE.Group>(null);
+  const canLimitedGroupRef = useRef<THREE.Group>(null);
+  const logoRef = useRef<THREE.Mesh>(null); 
+  const titleTextRef = useRef<THREE.Mesh>(null); 
+  const descriptionTextRef = useRef<THREE.Mesh>(null); 
   
   const loadedTextures = useTexture(flavors.map(f => f.texturePath), (textures) => {
     (Array.isArray(textures) ? textures : [textures]).forEach(texture => {
@@ -327,7 +335,6 @@ const Scene = ({ section, activeFlavor, isAnimating, isMobile }) => {
 
     switch(section) {
       case 0: // Landing
-        console.log('0')
         canTargetPosition = new THREE.Vector3(0, 7, 2.5);
         canTargetScale = new THREE.Vector3(1.1, 1.1, 1.1);
         canTargetRotation = new THREE.Vector3(0, 0.3, 0);
@@ -337,7 +344,6 @@ const Scene = ({ section, activeFlavor, isAnimating, isMobile }) => {
         canLimitedTargetRotation = new THREE.Vector3(0, 0, 0);
         break;
       case 1:
-        console.log('1')
         canTargetPosition = new THREE.Vector3(0, 7, 2.5);
         canTargetScale = new THREE.Vector3(1.1, 1.1, 1.1);
         canTargetRotation = new THREE.Vector3(0, 0.3, 0);
@@ -347,7 +353,6 @@ const Scene = ({ section, activeFlavor, isAnimating, isMobile }) => {
         canLimitedTargetRotation = new THREE.Vector3(0, 0, 0);
         break;
       case 2: // Product Hub (Flavors & Ingredients)
-        console.log('2')
         canTargetPosition = new THREE.Vector3(0, 0, 2.5);
         canTargetScale = new THREE.Vector3(1.1, 1.1, 1.1);
         canTargetRotation = new THREE.Vector3(0, 0.3, 0);
@@ -362,7 +367,6 @@ const Scene = ({ section, activeFlavor, isAnimating, isMobile }) => {
 
         break;
       case 3: // Lifestyle
-        console.log('3')
         canTargetPosition = new THREE.Vector3(0, 5, 4); // Move to the right
         canTargetScale = new THREE.Vector3(1.2, 1.2, 1.2);
         canTargetRotation = new THREE.Vector3(0, 0.3, 0);
@@ -372,7 +376,6 @@ const Scene = ({ section, activeFlavor, isAnimating, isMobile }) => {
         canLimitedTargetRotation = new THREE.Vector3(0, 0, 0);
         break;
       case 4: // Call to Action
-        console.log('4')
         // Animate the can down and away to put focus on the CTA text
         canTargetPosition = new THREE.Vector3(2.8, 5, 1.5); 
         canTargetScale = new THREE.Vector3(1.2, 1.2, 1.2);
@@ -387,7 +390,6 @@ const Scene = ({ section, activeFlavor, isAnimating, isMobile }) => {
         }
         break;
       default: // Fallback to the first section's state
-        console.log('5')
         canTargetPosition = new THREE.Vector3(2.8, 5, 1.5); 
         canTargetScale = new THREE.Vector3(1.2, 1.2, 1.2);
         canTargetRotation = new THREE.Vector3(0, 0, 0);
@@ -406,7 +408,7 @@ const Scene = ({ section, activeFlavor, isAnimating, isMobile }) => {
     gsap.to(canLimitedGroupRef.current.rotation, { ...canLimitedTargetRotation, duration: 1.5, ease: 'power3.inOut' });
   }, [section, isMobile]);
 
-  function CameraRig({ section }) {
+  function CameraRig({ section }: { section: number }) {
     useFrame((state) => {
       const { pointer } = state;
       const targetY = section === 4 ? 0.5 : pointer.y * 0.5;
@@ -424,12 +426,8 @@ const Scene = ({ section, activeFlavor, isAnimating, isMobile }) => {
     return null;
   }
 
-  // console.log('isMobile', isMobile)
-
   return (
     <>
-      {/* <AnimatedBackground color={currentBackgroundColor} /> */}
-      
       <ambientLight intensity={0.4} />
       <directionalLight
         position={[4, 2, 8]}
@@ -448,6 +446,7 @@ const Scene = ({ section, activeFlavor, isAnimating, isMobile }) => {
 
       {/* {section < 2 && <FloatingOrbs />} */}
 
+      {/* eslint-disable-next-line jsx-a11y/alt-text */}
       <Image
         ref={logoRef}
         url="/logos/folia-logo.png" // The path to your image in the /public folder
@@ -537,7 +536,7 @@ export default function Home() {
   const [isAnimating, setIsAnimating] = useState(false);
   const [activeFlavorId, setActiveFlavorId] = useState(flavors[0].id);
 
-  const mainRef = useRef(null);
+  const mainRef = useRef<HTMLDivElement>(null);
 
   const activeFlavor = flavors.find(f => f.id === activeFlavorId) || flavors[0];
 
@@ -545,12 +544,13 @@ export default function Home() {
   const currentTextColor = activeFlavor.textColor;
 
   const { width } = useWindowSize();
-  const isMobile = width < 768;
+  const isMobile = (width || 1920) < 768;
+  console.log('width', width)
 
   useEffect(() => {
     if (!mainRef.current) return;
 
-    const handleWheel = (event) => {
+    const handleWheel = (event: WheelEvent) => {
       if (isAnimating) return;
 
       const scrollDown = event.deltaY > 0;
@@ -571,7 +571,7 @@ export default function Home() {
     return () => mainElement.removeEventListener('wheel', handleWheel);
   }, [section, isAnimating]);
 
-  const changeSection = (newSection) => {
+  const changeSection = (newSection: number) => {
     if (isAnimating || newSection === section) return;
     if (newSection < 0 || newSection >= TOTAL_SECTIONS) return; // Prevent out-of-bounds
     
@@ -607,7 +607,6 @@ export default function Home() {
             />
           )}
 
-          {/* {section === 1 && <LandingUI onDiscoverClick={() => changeSection(2)} />} */}
           {section === 2 && <ConfiguratorUI isMobile={isMobile} key="config" activeFlavor={activeFlavor} onFlavorChange={setActiveFlavorId} flavors={flavors} textColor={currentTextColor} />}
           {section === NEW_SECTION_INDEX && <OurProcessUI isMobile={isMobile} key="process" />}
           {section === 4 && <LimitedEditionUI isMobile={isMobile} key="limited" />}
